@@ -26,3 +26,5 @@ if __name__ == '__main__':
     # `host='0.0.0.0'`: Faz com que o servidor escute em todas as interfaces de rede públicas.
     # Isso é crucial para que a aplicação, rodando dentro de um contêiner Docker, possa ser acessada a partir do seu computador (o "host").
     app.run(debug=True, host='0.0.0.0')
+
+# Adicionando um comentário para testar o trigger da pipeline de CI.
