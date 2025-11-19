@@ -4,11 +4,14 @@ FROM python:3.8-slim
 # Defina o diretório de trabalho no contêiner
 WORKDIR /app
 
-# Copie o diretório atual para o contêiner em /app
-COPY . /app
+# Copie o arquivo de dependências primeiro para aproveitar o cache do Docker
+COPY requirements.txt .
 
 # Instale as dependências necessárias
 RUN pip install -r requirements.txt
+
+# Copie o restante do código da aplicação
+COPY . .
 
 # Exponha a porta 5000 para o mundo exterior
 EXPOSE 5000
