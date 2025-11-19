@@ -1,0 +1,20 @@
+# Ambiente virtual
+venv/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.gitignore
+
+# Documentação e arquivos de configuração do Docker
+README.md
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# CI/CD
+.github/
+
+# Testes
+tests/

@@ -1,5 +1,5 @@
 # Importa a classe Flask do pacote flask. A classe Flask é o componente central de qualquer aplicação web com Flask.
-from flask import Flask
+from flask import Flask, jsonify
 
 # Cria uma instância da aplicação Flask.
 # A variável `__name__` é uma variável especial em Python que contém o nome do módulo atual.
@@ -14,6 +14,14 @@ def hello():
     # Esta é a "view function", a função que responde à requisição para a URL definida na rota.
     # Ela retorna a string que será exibida como resposta no navegador do usuário.
     return "Hello, World from a Docker container!"
+
+@app.route('/health')
+def health_check():
+    """
+    Endpoint de verificação de saúde.
+    Retorna o status da aplicação em formato JSON.
+    """
+    return jsonify(status="ok", message="Application is healthy")
 
 # Este bloco condicional verifica se o script está sendo executado diretamente pelo interpretador Python.
 # Se o arquivo for importado como um módulo em outro script, este bloco não será executado.

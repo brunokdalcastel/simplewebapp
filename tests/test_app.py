@@ -17,6 +17,13 @@ class BasicTestCase(unittest.TestCase):
         # Verifica se o conteúdo da resposta contém a string esperada
         self.assertTrue(b'Hello, World from a Docker container!' in response.data)
 
+    def test_health_check(self):
+        """Testa a rota de verificação de saúde."""
+        tester = app.test_client(self)
+        response = tester.get('/health', content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"status": "ok", "message": "Application is healthy"})
+
     def test_404_not_found(self):
         """Testa se uma rota inexistente retorna 404."""
         tester = app.test_client(self)

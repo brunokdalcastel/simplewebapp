@@ -15,7 +15,7 @@ Estas instruções permitirão que você obtenha uma cópia do projeto em execu�
 
 1. Clone o repositório
    ```sh
-   git clone https://github.com/seu_usuario/simple-web-app.git
+   git clone https://github.com/brunokdalcastel/simplewebapp.git
    ```
 2. Instale os pacotes Python
    ```sh
