@@ -66,10 +66,6 @@ O pipeline executa as seguintes etapas:
 3. Executa os testes automatizados.
 4. Constrói a imagem Docker se os testes passarem.
 
-## Contribuindo
-
-Pull requests são bem-vindos. Para alterações importantes, abra um problema primeiro para discutir o que você gostaria de mudar.
-
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) para mais detalhes.

@@ -17,5 +17,11 @@ class BasicTestCase(unittest.TestCase):
         # Verifica se o conteúdo da resposta contém a string esperada
         self.assertTrue(b'Hello, World from a Docker container!' in response.data)
 
+    def test_404_not_found(self):
+        """Testa se uma rota inexistente retorna 404."""
+        tester = app.test_client(self)
+        response = tester.get('/nonexistent', content_type='html/text')
+        self.assertEqual(response.status_code, 404)
+
 if __name__ == '__main__':
     unittest.main()
