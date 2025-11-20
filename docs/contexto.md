@@ -29,3 +29,14 @@ O projeto consiste em uma aplicação web simples desenvolvida em Python com o f
 - **Fase 2 (IaC)**: Migrar infraestrutura para código com Terraform.
 - **Fase 3 (Orquestração)**: Preparar aplicação para Kubernetes.
 - **Fase 4 (Cloud)**: Deploy em provedor de nuvem (AWS/Azure).
+
+## Metodologia de Trabalho (GitHub Flow)
+
+Para simular um ambiente profissional e demonstrar senioridade, adotaremos o seguinte fluxo para novas features:
+
+1.  **Branch**: Criar uma branch específica (`git checkout -b feat/nome-da-feature`).
+2.  **Commit**: Realizar alterações e commits pequenos.
+3.  **Push**: Enviar a branch para o remoto (`git push origin feat/nome-da-feature`).
+4.  **Pull Request (PR)**: Abrir um PR no GitHub para merge na `master`.
+5.  **CI Check**: Aguardar a aprovação da pipeline de testes.
+6.  **Merge**: Realizar o merge apenas se a pipeline estiver verde.
