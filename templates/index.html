@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps System Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>PyMonitor DevOps</h1>
+            <p class="subtitle">Monitoramento de Recursos & Teste de Conectividade</p>
+        </header>
+
+        <main>
+            <section class="card stats-card">
+                <h2>Recursos do Container</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">CPU</span>
+                        <div class="progress-bar">
+                            <div id="cpu-bar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span id="cpu-val" class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Memória</span>
+                        <div class="progress-bar">
+                            <div id="mem-bar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span id="mem-val" class="stat-value">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Disco</span>
+                        <div class="progress-bar">
+                            <div id="disk-bar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span id="disk-val" class="stat-value">0%</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button onclick="startStress()" class="warning-btn">⚡ Gerar Carga de CPU (5s)</button>
+                    <p id="stress-msg" class="subtitle" style="font-size: 0.9rem; margin-top: 0.5rem; display: none;">
+                        Gerando carga...</p>
+                </div>
+            </section>
+
+            <section class="card check-card">
+                <h2>Teste de Conectividade</h2>
+                <div class="input-group">
+                    <input type="text" id="url-input" placeholder="Ex: google.com ou https://api.github.com">
+                    <button onclick="checkUrl()">Testar URL</button>
+                </div>
+                <div id="check-result" class="result-box hidden"></div>
+            </section>
+
+            <section class="card history-card">
+                <h2>Histórico de Verificações</h2>
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Status</th>
+                            <th>Tempo</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function updateStats() {
+            fetch('/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cpu-val').innerText = data.cpu + '%';
+                    document.getElementById('cpu-bar').style.width = data.cpu + '%';
+
+                    document.getElementById('mem-val').innerText = data.memory.percent + '%';
+                    document.getElementById('mem-bar').style.width = data.memory.percent + '%';
+
+                    document.getElementById('disk-val').innerText = data.disk.percent + '%';
+                    document.getElementById('disk-bar').style.width = data.disk.percent + '%';
+                });
+        }
+
+        function updateHistory() {
+            fetch('/api/history')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#history-table tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(item => {
+                        const row = `<tr>
+                            <td>${item.url}</td>
+                            <td><span class="badge ${item.status_code < 400 ? 'success' : 'error'}">${item.status_code}</span></td>
+                            <td>${item.response_time}</td>
+                            <td>${item.timestamp}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        function checkUrl() {
+            const url = document.getElementById('url-input').value;
+            const resultBox = document.getElementById('check-result');
+
+            resultBox.classList.remove('hidden');
+            resultBox.innerHTML = 'Verificando...';
+            resultBox.className = 'result-box processing';
+
+            fetch('/api/check_url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        resultBox.innerHTML = `Erro: ${data.error}`;
+                        resultBox.className = 'result-box error';
+                    } else {
+                        resultBox.innerHTML = `Status: ${data.status_code} | Tempo: ${data.time}`;
+                        resultBox.className = `result-box ${data.status === 'up' ? 'success' : 'error'}`;
+                        updateHistory();
+                    }
+                })
+                .catch(err => {
+                    resultBox.innerHTML = 'Erro ao conectar com o servidor.';
+                    resultBox.className = 'result-box error';
+                });
+        }
+
+        function startStress() {
+            const msg = document.getElementById('stress-msg');
+            msg.style.display = 'block';
+            msg.innerText = 'Gerando carga... Observe o gráfico de CPU!';
+
+            fetch('/api/stress', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    setTimeout(() => {
+                        msg.innerText = 'Teste finalizado.';
+                        setTimeout(() => { msg.style.display = 'none'; }, 2000);
+                    }, 5000);
+                });
+        }
+
+        // Atualiza stats a cada 2 segundos
+        setInterval(updateStats, 2000);
+        // Atualiza histórico ao carregar
+        updateHistory();
+        updateStats();
+    </script>
+</body>
+
+</html>

@@ -1,5 +1,11 @@
 # Use a imagem oficial do Python como imagem base
-FROM python:3.12-slim
+FROM python:3.8-slim
+
+# Instala dependências de sistema necessárias para psutil e outros pacotes
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Configurações de ambiente para Python
 ENV PYTHONDONTWRITEBYTECODE=1

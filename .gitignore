@@ -1,11 +1,1 @@
-venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-.coverage
-htmlcov/
-dist/
-build/
-*.egg-info/
-.env
 docs/contexto.md

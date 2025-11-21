@@ -1,4 +1,4 @@
-# Diário de Bordo - Simple Web App
+# Diário de Bordo - PyMonitor DevOps
 
 Este documento serve como um diário de bordo para o desenvolvimento do projeto "Simple Web App", detalhando desde a criação da aplicação até a sua automação com Docker e GitHub Actions.
 
@@ -10,10 +10,10 @@ O objetivo deste projeto é criar uma aplicação web simples utilizando Flask, 
 
 A base do projeto é uma aplicação web minimalista desenvolvida em Python com o framework Flask.
 
-- **`app.py`**: Este arquivo contém o código-fonte da aplicação. Ele cria um servidor web que, ao ser acessado na rota principal (`/`), retorna a mensagem "Hello, World from a Docker container!". O código é extensivamente comentado para explicar cada parte do processo, desde a importação do Flask até a execução do servidor de desenvolvimento.
-- **`requirements.txt`**: Lista as dependências Python do projeto, que neste caso é apenas o `Flask`.
+- **`app.py`**: O núcleo da aplicação. Agora evoluiu de um simples "Hello World" para um servidor completo que gerencia rotas de API para monitoramento de sistema (`/api/stats`), verificação de conectividade (`/api/check_url`) e persistência de dados com SQLite.
+- **`requirements.txt`**: Lista as dependências, incluindo `Flask`, `psutil` (para métricas de sistema) e `requests` (para testes HTTP).
 
-A aplicação foi projetada para rodar em modo de depuração, escutando em todas as interfaces de rede (`host='0.0.0.0'`), o que é essencial para que ela seja acessível de fora do contêiner Docker.
+A aplicação roda na porta 5000 e utiliza templates HTML para renderizar o dashboard.
 
 ## 3. Dockerização
 
@@ -60,35 +60,14 @@ O código-fonte foi versionado com Git e hospedado no GitHub. Os seguintes passo
 
 ## 5. Testes Automatizados
 
-
-
-Para garantir a qualidade e a estabilidade da aplicação, foram criados testes automatizados utilizando o módulo nativo `unittest` do Python.
-
-
+Para garantir a estabilidade, os testes foram expandidos para cobrir as novas funcionalidades.
 
 ### 5.1. Estrutura de Testes (`tests/test_app.py`)
 
-
-
-Foi criado um diretório `tests` na raiz do projeto para abrigar os arquivos de teste.
-
-
-
-- **`tests/test_app.py`**: Este arquivo contém o primeiro caso de teste para a nossa aplicação.
-
-    1.  **`import unittest` e `from app import app`**: Importa as bibliotecas necessárias, incluindo a instância da aplicação Flask.
-
-    2.  **`class BasicTestCase(unittest.TestCase)`**: Define uma classe de teste que herda de `unittest.TestCase`.
-
-    3.  **`def test_home(self)`**: Define um método de teste.
-
-        - **`tester = app.test_client(self)`**: Cria um "cliente de teste" que permite simular requisições à aplicação sem a necessidade de um servidor web rodando.
-
-        - **`response = tester.get('/', ...)`**: Envia uma requisição `GET` para a rota principal (`/`).
-
-        - **`self.assertEqual(response.status_code, 200)`**: Verifica se o código de status da resposta é `200 OK`, indicando que a requisição foi bem-sucedida.
-
-        - **`self.assertTrue(b'Hello, World...' in response.data)`**: Verifica se o corpo da resposta contém a mensagem esperada, garantindo que a rota está retornando o conteúdo correto.
+- **`test_home`**: Verifica se a página inicial carrega corretamente.
+- **`test_api_stats`**: Verifica se a API de estatísticas retorna os campos esperados (CPU, Memória, Disco). Utilizamos `unittest.mock` para simular os dados do `psutil`, garantindo que os testes rodem em qualquer ambiente (Windows/Linux) sem erros de permissão ou caminho.
+- **`test_check_url`**: Testa a lógica de verificação de URLs, mockando a biblioteca `requests` para não depender de conexão real com a internet durante os testes.
+- **`test_health_check`**: Valida o endpoint de saúde da aplicação.
 
 
 
